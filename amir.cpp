@@ -419,7 +419,8 @@ void read_data(ifstream & in,ofstream & out, ofstream & err) {
             }
 
             if(isok_type_of_instrument(eqins))
-                eqtmp.type_of_instrument = (types_of_instrument)type_of_instrument_enum(eqins);
+                eqtmp.type_of_instrument =
+                   (types_of_instrument)type_of_instrument_enum(eqins);
             else
             {
                 noerr=false;
