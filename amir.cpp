@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //
-// Earthquakes-Analysis
+// Earthquakes' Events Analysis
 // By Amirhossein Naemi
 // Febuary, 2015
 // GIT: https://github.com/amirhossein-naemi/Earthquakes-Analysis
@@ -146,14 +146,14 @@ void print_output(ofstream & o, stringstream & txt, bool only2file=false) {
     txt.clear();
 }
 
-void open_input(ifstream & ifile, string ifilename, ofstream & err) {
+void open_input(ifstream & ifile, string ifilename, ofstream & log) {
     // Sanity check on the file stream
 
     ifile.open(ifilename.c_str());
     if (!ifile.is_open()) {
         stringstream str;
         str << "Error! Cannot open input file: " <<  ifilename << endl;
-        print_output(err,str);
+        print_output(log,str);
         exit(0);
     }
     return;
@@ -315,41 +315,41 @@ bool isok_timezone(string str) {
     return false;
 }
 
-void read_header(ifstream & in, ofstream & err) {//, EQ & eqs) {
+void read_header(ifstream & in, ofstream & log) {//, EQ & eqs) {
 
     string eID, ID, dt, nam, geo,  tm, tz,magnitude_type;
     float magnitude_size;
     stringstream str;
 
     // First row: Event ID
-    in >> eID;
-    str <<eID << endl;
-    print_output(err,str);
+    in  >> eID;
+    str << eID << endl;
+    print_output(log,str);
     str.clear();
 
     in >> dt >> tm >> tz;
     str <<dt << tm << tz << endl;
     std::getline(in, nam);//err
-    print_output(err,str);
+    print_output(log,str);
 
     if(!isok_date(dt))
     {
         str << "Error! date is invalid" << endl;
-        print_output(err,str);
+        print_output(log,str);
         exit(0);
     }
 
     if(!isok_time(tm) || !isok_timezone(tz))
     {
         str << "Error! time is invalid" << endl;
-        print_output(err,str);
+        print_output(log,str);
         exit(0);
     }
 
     // Third row: Name of the earthquake (may be multiple words)
     std::getline(in, nam);
     str << nam << endl;
-    print_output(err,str);
+    print_output(log,str);
 
     // Fourth row: epicenter location (three doubles: longitude, latitude, and
     // depth), followed by the magnitude type and magnitude size (a string and a
@@ -361,23 +361,23 @@ void read_header(ifstream & in, ofstream & err) {//, EQ & eqs) {
     if(!isok_magnitude(magnitude_type))
     {
         str << "Error! Magnitude type is invalid" << endl;
-        print_output(err,str);
+        print_output(log,str);
         exit(0);
     }
 
     if(!isok_magnitude_size(magnitude_size))
     {
         str << "Error! Magnitude must be real positive" << endl;
-        print_output(err,str);
+        print_output(log,str);
         exit(0);
     }
 }
-void read_data(ifstream & in,ofstream & out, ofstream & err) {
+void read_data(ifstream & in,ofstream & out, ofstream & log) {
 
     stringstream str;
     string eqnet, eqst,eqbnd,eqins,eqor;
-    EQ eqtmp;
-    int cnt=0,i = 0;
+    EQ   eqtmp;
+    int  cnt=0, i = 0;
     bool noerr;
     bool other_err=false;
 
@@ -395,7 +395,7 @@ void read_data(ifstream & in,ofstream & out, ofstream & err) {
                 noerr=false;
                 str <<"Entry # " <<  setw(3) << right << cnt
                     << " ignored. Invalid network.\n";
-                print_output(err,str);
+                print_output(log,str);
             }
 
             if(isok_station_code(eqst))
@@ -405,7 +405,7 @@ void read_data(ifstream & in,ofstream & out, ofstream & err) {
                 noerr=false;
                 str <<"Entry # " <<  setw(3) << right << cnt
                     << " ignored. Invalid station name.\n";
-                print_output(err,str);
+                print_output(log,str);
             }
 
             if(isok_type_of_band(eqbnd))
@@ -415,7 +415,7 @@ void read_data(ifstream & in,ofstream & out, ofstream & err) {
                 noerr=false;
                 str <<"Entry # " << setw(3) << cnt
                     << " ignored. Invalid band type.\n";
-                print_output(err,str);
+                print_output(log,str);
             }
 
             if(isok_type_of_instrument(eqins))
@@ -426,7 +426,7 @@ void read_data(ifstream & in,ofstream & out, ofstream & err) {
                 noerr=false;
                 str <<"Entry # " << cnt
                     << " ignored. Invalid instrument.\n";
-                print_output(err,str);
+                print_output(log,str);
             }
 
             if(isok_Orientation(eqor))
@@ -436,7 +436,7 @@ void read_data(ifstream & in,ofstream & out, ofstream & err) {
                 noerr=false;
                 str <<"Entry # " << cnt
                     << " ignored. Invalid Orientation.\n";
-                print_output(err,str);
+                print_output(log,str);
             }
 
         }
@@ -461,20 +461,20 @@ void read_data(ifstream & in,ofstream & out, ofstream & err) {
     invalid=cnt-i;
     valid= i;
     if (valid < 1) {
-        str <<"Error! input number should be equal or greater than 1\n";
-        print_output(err,str);
+        str <<"logor! input number should be equal or greater than 1\n";
+        print_output(log,str);
         //return 2;
         exit(0);
     }
 
 }
 
-void process(ifstream & ifile, ofstream & err){
+void process(ifstream & ifile, ofstream & log){
 
     stringstream str;
-    str <<"E# 08 February 2015 17:45:02.000 PST Mw 4.9 Maneadero Baja"
-        <<" California Earthquake [37314320CI] (­115.66, 31.53, 0.9)\n";
-    print_output(err,str);
+    str << "E# 08 February 2015 17:45:02.000 PST Mw 4.9 Maneadero Baja"
+        << " California Earthquake [37314320CI] (­115.66, 31.53, 0.9)\n";
+    print_output(log,str);
     sign=0;
     for (int i = 0; i <= valid; i++) {
         for (int j = 0; j < eqs[i].Orientation.size(); j++) {
@@ -488,7 +488,7 @@ void process(ifstream & ifile, ofstream & err){
         }
     }
 
-    print_output(err,str);
+    print_output(log,str);
 }
 
 int main() {
@@ -497,11 +497,11 @@ int main() {
     // EQ eqs[300];
 
     string   inputfilename;
-    ofstream err, out;
+    ofstream log, out;
     ifstream in;
     stringstream str;
 
-    open_output(err, "Amir.err");
+    open_output(log, "Amir.log");
     open_output(out, "Amir.out");
 
     // Prompt user for input/output file
@@ -509,18 +509,18 @@ int main() {
     cin  >> inputfilename;
     // sample data for testing purposes
     // inputfilename= "Amir.in";
-    open_input(in, inputfilename, err);
+    open_input(in, inputfilename, log);
 
     str << "Processing input..."  << endl;
-    print_output(err,str);
+    print_output(log,str);
 
-    read_header(in,err);
+    read_header(in,log);
 
     str << "Header read correctly!"  << endl << endl;
-    print_output(err,str);
+    print_output(log,str);
 
 
-    read_data(in,out,err);
+    read_data(in,out,log);
     process(in,out);
     print_output(out, str);
 
@@ -528,10 +528,10 @@ int main() {
         << "Totoal valid entries read: " << valid << endl
         <<"Total singal names produced: " << sign << endl
         << "Finished!" << endl;
-    print_output(err,str);
+    print_output(log,str);
 
-    if (err.is_open())
-        err.close();
+    if (log.is_open())
+        log.close();
     if (in.is_open())
         in.close();
     if (out.is_open())
